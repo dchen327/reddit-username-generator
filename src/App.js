@@ -6,10 +6,39 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loadingModel: false,
+      loadingModel: true,
       generatingText: false,
+      numUsernames: 0,
+      temperature: 0,
+      startString: '',
+      numGenerated: 0,
+      usernames: [],
     };
   }
+  
+  timeout(delay) {
+      return new Promise( res => setTimeout(res, delay) );
+  }
+
+  componentDidMount() {
+    this.loadModel();
+  }
+
+  loadModel = async () => {
+    console.log('loading model');
+    await this.timeout(1000);
+    console.log('model loaded');
+    this.setState({loadingModel: false});
+  }
+
+  generateUsernames = async () => {
+    console.log('generating usernames')
+    this.setState({generatingText: true});
+    await this.timeout(1000);
+    console.log('usernames generated')
+    this.setState({generatingText: false});
+  }
+
   render() {
     return (
       <Container>
@@ -44,9 +73,12 @@ class App extends Component {
           </Grid.Column>
         </Grid>
         <Divider/>
-        {this.state.loadingModel ? // show loading indicator
+        {this.state.loadingModel ? // show loading indicator when loading model
         <Loader active>Loading Model</Loader> :
-        <Button color='teal'>Create Usernames</Button>}
+        <Button color='teal' onClick={this.generateUsernames}>Create Usernames</Button>}
+
+        {this.state.generatingText && // when generating text
+        <Loader active>Generating usernames... {this.state.numGenerated}/{this.state.numUsernames}</Loader>}
       </Container>
     );
   }
