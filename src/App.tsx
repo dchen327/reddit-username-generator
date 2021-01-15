@@ -43,8 +43,8 @@ class App extends Component<Props, State> {
 
   loadModel = async () => {
     console.log('loading model');
-    // await this.timeout(300);
-    const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
+    await this.timeout(200);
+    // const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
     console.log('model loaded');
     this.setState({loadingModel: false});
   }
@@ -61,7 +61,8 @@ class App extends Component<Props, State> {
   render() {
     return (
       <Container>
-        <Header size='huge' style={{paddingTop: '20px'}}>Reddit Username Generator</Header>
+        <Header size='huge' style={{paddingTop: '20px', display: 'inline-block'}}>Reddit Username Generator</Header>
+        <a style={{padding: '20px'}} href='https://github.com/dchen327'>(GitHub)</a>
         <Grid columns={3}>
           <Grid.Column>
             <Popup 
