@@ -1,11 +1,22 @@
-import {Button, Input} from 'semantic-ui-react'
+import {Button, Container, Grid, Header, Input} from 'semantic-ui-react'
+import 'semantic-ui-css/semantic.min.css'
 
 function App() {
   return (
-    <div className="App">
-      <Button>Click me</Button>
-      <Input focus placeholder='10'>Hello World</Input>
-    </div>
+    <Container>
+      <Header>Reddit Username Generator</Header>
+      <Grid columns={3}>
+        <Grid.Column>
+          <Input focus placeholder='8'></Input>
+        </Grid.Column>
+        <Grid.Column>
+          <Input focus placeholder='11'></Input>
+        </Grid.Column>
+        <Grid.Column>
+          <Input focus placeholder='12'></Input>
+        </Grid.Column>
+      </Grid>
+    </Container>
   );
 }
 
