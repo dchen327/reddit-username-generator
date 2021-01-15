@@ -58,17 +58,38 @@ class App extends Component<Props, State> {
     // await this.timeout(200);
     const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
     console.log('model loaded');
-    this.setState({loadingModel: false});
+    this.setState({loadingModel: false, model: model});
   }
 
   generateUsernames = async () => {
-    let {numUsernames, temperature, startString} = this.state;
+    let {numUsernames, temperature, startString, model} = this.state;
     const char2idx = {"\n": 0, "-": 1, "0": 2, "1": 3, "2": 4, "3": 5, "4": 6, "5": 7, "6": 8, "7": 9, "8": 10, "9": 11, "A": 12, "B": 13, "C": 14, "D": 15, "E": 16, "F": 17, "G": 18, "H": 19, "I": 20, "J": 21, "K": 22, "L": 23, "M": 24, "N": 25, "O": 26, "P": 27, "Q": 28, "R": 29, "S": 30, "T": 31, "U": 32, "V": 33, "W": 34, "X": 35, "Y": 36, "Z": 37, "_": 38, "a": 39, "b": 40, "c": 41, "d": 42, "e": 43, "f": 44, "g": 45, "h": 46, "i": 47, "j": 48, "k": 49, "l": 50, "m": 51, "n": 52, "o": 53, "p": 54, "q": 55, "r": 56, "s": 57, "t": 58, "u": 59, "v": 60, "w": 61, "x": 62, "y": 63, "z": 64};
 
+    // Convert start string to numbers (vectorizing)
     let inputEval: string[] = [];
     for (let char of startString) {
       inputEval.push(char2idx[char]);
     }
+    let inputTensor = tf.tensor1d(inputEval);
+    inputTensor.expandDims(0);  // fix dimensions
+
+    let textGenerated: string[] = []; // store our generated usernames
+    
+    let numGenerated = 0;
+    while (numGenerated < numUsernames) {
+      let predictions = model.predict(inputTensor);
+      // remove batch dimension
+      predictions = tf.squeeze(predictions);
+      // use categorical distribution to predict next char
+      predictions = predictions.
+      // use multinomial since random.categorical doesn't exist in tfjs
+      console.log(predictions);
+      let predictedID = tf.multinomial(predictions, 1);
+      console.log(predictedID);
+      break;
+    }
+    
+    
     console.log(inputEval);
     console.log(numUsernames, temperature, startString)
     console.log('generating usernames')
