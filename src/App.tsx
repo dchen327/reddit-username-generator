@@ -62,8 +62,12 @@ class App extends Component<Props, State> {
   }
 
   generateUsernames = async () => {
+    console.log('generating usernames')
+    this.setState({generatingText: true});
+    
     let {numUsernames, temperature, startString, model} = this.state;
     const char2idx = {"\n": 0, "-": 1, "0": 2, "1": 3, "2": 4, "3": 5, "4": 6, "5": 7, "6": 8, "7": 9, "8": 10, "9": 11, "A": 12, "B": 13, "C": 14, "D": 15, "E": 16, "F": 17, "G": 18, "H": 19, "I": 20, "J": 21, "K": 22, "L": 23, "M": 24, "N": 25, "O": 26, "P": 27, "Q": 28, "R": 29, "S": 30, "T": 31, "U": 32, "V": 33, "W": 34, "X": 35, "Y": 36, "Z": 37, "_": 38, "a": 39, "b": 40, "c": 41, "d": 42, "e": 43, "f": 44, "g": 45, "h": 46, "i": 47, "j": 48, "k": 49, "l": 50, "m": 51, "n": 52, "o": 53, "p": 54, "q": 55, "r": 56, "s": 57, "t": 58, "u": 59, "v": 60, "w": 61, "x": 62, "y": 63, "z": 64};
+    const idx2char = ['\n', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
 
     // Convert start string to numbers (vectorizing)
     let inputEval: string[] = [];
@@ -81,20 +85,30 @@ class App extends Component<Props, State> {
       // remove batch dimension
       predictions = tf.squeeze(predictions);
       // use categorical distribution to predict next char
-      predictions = predictions.
+      predictions = predictions.mul(1 / temperature);
       // use multinomial since random.categorical doesn't exist in tfjs
-      console.log(predictions);
-      let predictedID = tf.multinomial(predictions, 1);
-      console.log(predictedID);
-      break;
+      let predTensor = tf.multinomial(predictions, 1);
+      inputTensor = tf.expandDims(predTensor, 0);
+      numGenerated++;
+      predTensor.data().then(data => {
+        let predictedID = data[0];
+        // console.log(idx2char[predictedID]);
+        if (idx2char[predictedID] === '\n') { // finished creating a new username
+          numGenerated += 100;
+          console.log('NEW USERNAME');
+        }
+        textGenerated.push(idx2char[predictedID]);
+      });
+      if (numGenerated > 20) {
+        console.log('> 20');
+        break;
+      }
+      // console.log(idx2char[predictedID]);
+      // break;
     }
     
-    
-    console.log(inputEval);
-    console.log(numUsernames, temperature, startString)
-    console.log('generating usernames')
-    this.setState({generatingText: true});
-    await this.timeout(300);
+    console.log(textGenerated);
+
     console.log('usernames generated')
     let usernames = ['text ', 'username 2', 'hello world'];
     this.setState({generatingText: false, usernames: usernames, numGenerated: 20, temperature: 0.5, startString: '\n'});
