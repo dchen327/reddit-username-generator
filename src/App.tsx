@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import {Button, Container, Divider, Grid, Header, Input, List, Loader, Popup} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
+import * as tf from '@tensorflow/tfjs';
+
 type Props = {};
 
 type State = {
@@ -12,6 +14,7 @@ type State = {
   startString: string,
   numGenerated: number,
   usernames: Array<string>,
+  model: any,
 };
 
 class App extends Component<Props, State> {
@@ -26,6 +29,7 @@ class App extends Component<Props, State> {
       startString: '',
       numGenerated: 0,
       usernames: [],
+      model: null,
     };
   }
   
@@ -39,7 +43,8 @@ class App extends Component<Props, State> {
 
   loadModel = async () => {
     console.log('loading model');
-    await this.timeout(300);
+    // await this.timeout(300);
+    const model = await tf.loadLayersModel('../assets/tfjs/model.json');
     console.log('model loaded');
     this.setState({loadingModel: false});
   }
