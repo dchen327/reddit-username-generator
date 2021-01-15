@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Container, Divider, Grid, Header, Input, List, Loader, Popup} from 'semantic-ui-react'
+import {Button, Container, Divider, Form, Grid, Header, Input, List, Loader, Popup} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
 import * as tf from '@tensorflow/tfjs';
@@ -63,35 +63,25 @@ class App extends Component<Props, State> {
       <Container>
         <Header size='huge' style={{paddingTop: '20px', display: 'inline-block'}}>Reddit Username Generator</Header>
         <a style={{padding: '20px'}} href='https://github.com/dchen327'>(GitHub)</a>
-        <Grid columns={3}>
-          <Grid.Column>
+        <Form>
+          <Form.Group widths='equal'>
             <Popup 
               content='Generate this many usernames.'
-              trigger={
-                <Input label='Number of usernames:' placeholder='20'></Input>
-              }
+              trigger={<Form.Field control={Input} label='Number of usernames:' placeholder='20'/>}
               on='focus'
             />
-          </Grid.Column>
-          <Grid.Column>
             <Popup 
               content='Temperatures are between 0 and 1, with lower temperatures producing more predictable text and higher temperatures resulting in more surprising text.'
-              trigger={
-                <Input label='Temperature:' placeholder='0.5'></Input>
-              }
+              trigger={<Form.Field control={Input} label='Temperature:' placeholder='0.5'/>}
               on='focus'
             />
-          </Grid.Column>
-          <Grid.Column>
             <Popup 
-              content='Start string (ex: PM-ME). This will be used as the prefix for the first username generated. If left blank, the first username will start with a random character.'
-              trigger={
-                <Input label='Start string:'></Input>
-              }
+              content='Start string (ex: PM_ME). This will be used as the prefix for the first username generated. If left blank, the first username will start with a random character.'
+              trigger={<Form.Field control={Input} label='Start string:'/>}
               on='focus'
             />
-          </Grid.Column>
-        </Grid>
+          </Form.Group>
+        </Form>
         <Divider/>
         {this.state.loadingModel ? // show loading indicator when loading model
         <Loader active>Loading Model</Loader> :
