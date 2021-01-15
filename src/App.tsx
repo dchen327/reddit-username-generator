@@ -29,7 +29,7 @@ class App extends Component<Props, State> {
     };
   }
   
-  timeout(delay) {
+  timeout(delay: number) {
       return new Promise( res => setTimeout(res, delay) );
   }
 
@@ -49,7 +49,7 @@ class App extends Component<Props, State> {
     this.setState({generatingText: true});
     await this.timeout(300);
     console.log('usernames generated')
-    var usernames = ['text ', 'username 2', 'hello world'];
+    let usernames = ['text ', 'username 2', 'hello world'];
     this.setState({generatingText: false, usernames: usernames});
   }
 
