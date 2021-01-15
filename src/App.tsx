@@ -44,7 +44,7 @@ class App extends Component<Props, State> {
   loadModel = async () => {
     console.log('loading model');
     // await this.timeout(300);
-    const model = await tf.loadLayersModel('../assets/tfjs/model.json');
+    const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
     console.log('model loaded');
     this.setState({loadingModel: false});
   }
