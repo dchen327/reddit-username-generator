@@ -1,10 +1,23 @@
-import React, { Component } from "react";
+import React, { Component } from 'react';
 import {Button, Container, Divider, Grid, Header, Input, List, Loader, Popup} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
-class App extends Component {
-  constructor(props) {
+type Props = {};
+
+type State = {
+  loadingModel: boolean,
+  generatingText: boolean,
+  numUsernames: number,
+  temperature: number,
+  startString: string,
+  numGenerated: number,
+  usernames: Array<string>,
+};
+
+class App extends Component<Props, State> {
+  constructor(props: Props) {
     super(props);
+
     this.state = {
       loadingModel: true,
       generatingText: false,
@@ -36,7 +49,7 @@ class App extends Component {
     this.setState({generatingText: true});
     await this.timeout(300);
     console.log('usernames generated')
-    var usernames = [1, 2, 3];
+    var usernames = ['text ', 'username 2', 'hello world'];
     this.setState({generatingText: false, usernames: usernames});
   }
 
