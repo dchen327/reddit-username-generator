@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import {Button, Container, Dimmer, Divider, Grid, Header, Input, Label, Loader, Popup, Segment} from 'semantic-ui-react'
+import {Button, Container, Divider, Grid, Header, Input, List, Loader, Popup} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
 class App extends Component {
@@ -26,7 +26,7 @@ class App extends Component {
 
   loadModel = async () => {
     console.log('loading model');
-    await this.timeout(1000);
+    await this.timeout(300);
     console.log('model loaded');
     this.setState({loadingModel: false});
   }
@@ -34,9 +34,10 @@ class App extends Component {
   generateUsernames = async () => {
     console.log('generating usernames')
     this.setState({generatingText: true});
-    await this.timeout(1000);
+    await this.timeout(300);
     console.log('usernames generated')
-    this.setState({generatingText: false});
+    var usernames = [1, 2, 3];
+    this.setState({generatingText: false, usernames: usernames});
   }
 
   render() {
@@ -79,6 +80,14 @@ class App extends Component {
 
         {this.state.generatingText && // when generating text
         <Loader active>Generating usernames... {this.state.numGenerated}/{this.state.numUsernames}</Loader>}
+
+        {this.state.usernames.length > 0 && // usernames are generated
+        <List>
+          {this.state.usernames.map((username) => 
+            <List.Item>{username}</List.Item>
+          )}
+        </List>
+        }
       </Container>
     );
   }
