@@ -24,9 +24,9 @@ class App extends Component<Props, State> {
     this.state = {
       loadingModel: true,
       generatingText: false,
-      numUsernames: 0,
-      temperature: 0,
-      startString: '',
+      numUsernames: 20,
+      temperature: 0.5,
+      startString: '\n',
       numGenerated: 0,
       usernames: [],
       model: null,
@@ -37,25 +37,46 @@ class App extends Component<Props, State> {
       return new Promise( res => setTimeout(res, delay) );
   }
 
+  numUsernamesChanged = (e, { value }) => {
+    this.setState({ numUsernames : value });
+  }
+
+  temperatureChanged = (e, { value }) => {
+    this.setState({ temperature : value });
+  }
+
+  startStringChanged = (e, { value }) => {
+    this.setState({ startString : value });
+  }
+
   componentDidMount() {
     this.loadModel();
   }
 
   loadModel = async () => {
     console.log('loading model');
-    await this.timeout(200);
-    // const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
+    // await this.timeout(200);
+    const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
     console.log('model loaded');
     this.setState({loadingModel: false});
   }
 
   generateUsernames = async () => {
+    let {numUsernames, temperature, startString} = this.state;
+    const char2idx = {"\n": 0, "-": 1, "0": 2, "1": 3, "2": 4, "3": 5, "4": 6, "5": 7, "6": 8, "7": 9, "8": 10, "9": 11, "A": 12, "B": 13, "C": 14, "D": 15, "E": 16, "F": 17, "G": 18, "H": 19, "I": 20, "J": 21, "K": 22, "L": 23, "M": 24, "N": 25, "O": 26, "P": 27, "Q": 28, "R": 29, "S": 30, "T": 31, "U": 32, "V": 33, "W": 34, "X": 35, "Y": 36, "Z": 37, "_": 38, "a": 39, "b": 40, "c": 41, "d": 42, "e": 43, "f": 44, "g": 45, "h": 46, "i": 47, "j": 48, "k": 49, "l": 50, "m": 51, "n": 52, "o": 53, "p": 54, "q": 55, "r": 56, "s": 57, "t": 58, "u": 59, "v": 60, "w": 61, "x": 62, "y": 63, "z": 64};
+
+    let inputEval: string[] = [];
+    for (let char of startString) {
+      inputEval.push(char2idx[char]);
+    }
+    console.log(inputEval);
+    console.log(numUsernames, temperature, startString)
     console.log('generating usernames')
     this.setState({generatingText: true});
     await this.timeout(300);
     console.log('usernames generated')
     let usernames = ['text ', 'username 2', 'hello world'];
-    this.setState({generatingText: false, usernames: usernames});
+    this.setState({generatingText: false, usernames: usernames, numGenerated: 20, temperature: 0.5, startString: '\n'});
   }
 
   render() {
@@ -67,17 +88,26 @@ class App extends Component<Props, State> {
           <Form.Group widths='equal'>
             <Popup 
               content='Generate this many usernames.'
-              trigger={<Form.Field control={Input} label='Number of usernames:' placeholder='20'/>}
+              trigger={
+                <Form.Field control={Input} label='Number of usernames:' placeholder='20'
+                onChange={this.numUsernamesChanged}/>
+              }
               on='focus'
             />
             <Popup 
               content='Temperatures are between 0 and 1, with lower temperatures producing more predictable text and higher temperatures resulting in more surprising text.'
-              trigger={<Form.Field control={Input} label='Temperature:' placeholder='0.5'/>}
+              trigger={
+                <Form.Field control={Input} label='Temperature:' placeholder='0.5'
+                onChange={this.temperatureChanged}/>
+              }
               on='focus'
             />
             <Popup 
               content='Start string (ex: PM_ME). This will be used as the prefix for the first username generated. If left blank, the first username will start with a random character.'
-              trigger={<Form.Field control={Input} label='Start string:'/>}
+              trigger={
+                <Form.Field control={Input} label='Start string:'
+                onChange={this.startStringChanged}/>
+              }
               on='focus'
             />
           </Form.Group>
@@ -92,8 +122,8 @@ class App extends Component<Props, State> {
 
         {this.state.usernames.length > 0 && // usernames are generated
         <List>
-          {this.state.usernames.map((username) => 
-            <List.Item>{username}</List.Item>
+          {this.state.usernames.map((username, index) => 
+            <List.Item key={index}>{username}</List.Item>
           )}
         </List>
         }
