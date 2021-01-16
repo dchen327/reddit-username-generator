@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Container, Divider, Form, Header, Input, List, Loader, Popup} from 'semantic-ui-react'
+import {Button, Container, Divider, Form, Header, Input, List, Loader, Popup, Segment, TextArea} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
 import * as tf from '@tensorflow/tfjs';
@@ -106,6 +106,12 @@ class App extends Component<Props, State> {
       <Container>
         <Header size='huge' style={{paddingTop: '20px', display: 'inline-block'}}>Reddit Username Generator</Header>
         <a style={{padding: '20px'}} href='https://github.com/dchen327'>(GitHub)</a>
+        <Divider />
+        <Segment>
+          <p>Trained on 150,000 Reddit usernames, this LSTM-based text generator can produce novel usernames very similar to other Redditors.</p>
+          <p>Since the text generation is done through TensorFlow.js, it can take up to around 1 second per username.</p>
+          <p>Toggle the temperature to vary the degree of "sameness" in the generated usernames. Lower temperatures are more predictable.</p>
+        </Segment>
         <Form>
           <Form.Group widths='equal'>
             <Popup 
