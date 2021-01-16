@@ -54,7 +54,7 @@ class App extends Component<Props, State> {
   }
 
   loadModel = async () => {
-    const model = await tf.loadLayersModel('https://storage.googleapis.com/reddit-username-generator/tfjs/model.json');
+    const model = await tf.loadLayersModel('https://storage.googleapis.com/reddit-username-generator/tfjs-new/model.json');
     this.setState({loadingModel: false, model: model});
   }
 
