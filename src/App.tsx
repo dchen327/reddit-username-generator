@@ -103,7 +103,7 @@ class App extends Component<Props, State> {
   render() {
     const { loadingModel, generatingText, usernames } = this.state;
     return (
-      <Container height="80%">
+      <Container>
         <Header size='huge' style={{paddingTop: '30px', display: 'inline-block'}}>Reddit Username Generator</Header>
         <a style={{padding: '20px'}} href='https://github.com/dchen327/reddit-username-generator'>(GitHub)</a>
         <Divider />
@@ -149,14 +149,16 @@ class App extends Component<Props, State> {
 
         {generatingText && // when generating text
         // <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}
-      <Loader size='huge' active>Generating usernames... (~1s per username)</Loader>}
+        <Loader size='huge' active>Generating usernames... (~1s per username)</Loader>}
 
         {usernames.length > 0 && // usernames are generated
-        <List paddingBottom='50px' size='huge'>
+        <Segment>
+          <List size='huge'>
           {usernames.map((username, index) => 
             <List.Item key={index}>{username}</List.Item>
           )}
         </List>
+        </Segment>
         }
       </Container>
     );
