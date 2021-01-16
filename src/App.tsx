@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Container, Divider, Form, Grid, Header, Input, List, Loader, Popup} from 'semantic-ui-react'
+import {Button, Container, Divider, Form, Header, Input, List, Loader, Popup} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
 import * as tf from '@tensorflow/tfjs';
@@ -101,7 +101,7 @@ class App extends Component<Props, State> {
   }
 
   render() {
-    const { loadingModel, generatingText, usernames, numGenerated, numUsernames } = this.state;
+    const { loadingModel, generatingText, usernames } = this.state;
     return (
       <Container>
         <Header size='huge' style={{paddingTop: '20px', display: 'inline-block'}}>Reddit Username Generator</Header>
@@ -141,7 +141,7 @@ class App extends Component<Props, State> {
 
         {generatingText && // when generating text
         // <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}
-      <Loader active>Generating usernames...</Loader>}
+      <Loader active>Generating usernames... (It takes ~1s per username)</Loader>}
 
         {usernames.length > 0 && // usernames are generated
         <List size='big'>
