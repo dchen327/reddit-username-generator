@@ -96,7 +96,7 @@ class App extends Component<Props, State> {
           currString += idx2char[predictedID];
         }
       }
-      this.setState({generatingText: false, usernames: textGenerated, numUsernames: 5, temperature: 0.5});
+      this.setState({generatingText: false, usernames: textGenerated});
     });
   }
 
