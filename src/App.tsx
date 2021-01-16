@@ -24,7 +24,7 @@ class App extends Component<Props, State> {
     this.state = {
       loadingModel: true,
       generatingText: false,
-      numUsernames: 20,
+      numUsernames: 5,
       temperature: 0.5,
       startString: '\n',
       numGenerated: 0,
@@ -53,22 +53,13 @@ class App extends Component<Props, State> {
     this.loadModel();
   }
 
-  componentDidUpdate(prevState: any) {
-    if (this.state.numGenerated !== prevState.numGenerated) {
-      this.setState({})
-    }
-  }
-
   loadModel = async () => {
-    console.log('loading model');
     const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
-    console.log('model loaded');
     this.setState({loadingModel: false, model: model});
   }
 
   
   generateUsernames = async () => {
-    console.log('generating usernames')
     this.setState({ generatingText: true, numGenerated: 0 }, async () => {
       await this.timeout(10); // wait for state to rerender (i'm pretty sure this is really bad)
       let {numUsernames, temperature, startString, model} = this.state;
@@ -99,17 +90,13 @@ class App extends Component<Props, State> {
   
         if (idx2char[predictedID] === '\n') { // finished creating a new username
           textGenerated.push(currString);
-          console.log(currString);
           currString = '';
-          this.setState({numGenerated: this.state.numGenerated + 1}, async () => {
-            console.log(this.state.numGenerated);
-          });
         }
         else {
           currString += idx2char[predictedID];
         }
       }
-      this.setState({generatingText: false, usernames: textGenerated});
+      this.setState({generatingText: false, usernames: textGenerated, numUsernames: 5, temperature: 0.5});
     });
   }
 
@@ -124,7 +111,7 @@ class App extends Component<Props, State> {
             <Popup 
               content='Generate this many usernames.'
               trigger={
-                <Form.Field control={Input} label='Number of usernames:' placeholder='20'
+                <Form.Field control={Input} label='Number of usernames:' placeholder='5'
                 onChange={this.numUsernamesChanged}/>
               }
               on='focus'
@@ -137,14 +124,14 @@ class App extends Component<Props, State> {
               }
               on='focus'
             />
-            <Popup 
+            {/* <Popup 
               content='Start string (ex: PM_ME). This will be used as the prefix for the first username generated. If left blank, the first username will start with a random character.'
               trigger={
                 <Form.Field control={Input} label='Start string:'
                 onChange={this.startStringChanged}/>
               }
               on='focus'
-            />
+            /> */}
           </Form.Group>
         </Form>
         <Divider/>
@@ -154,10 +141,10 @@ class App extends Component<Props, State> {
 
         {generatingText && // when generating text
         // <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}
-        <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}
+      <Loader active>Generating usernames...</Loader>}
 
         {usernames.length > 0 && // usernames are generated
-        <List>
+        <List size='big'>
           {usernames.map((username, index) => 
             <List.Item key={index}>{username}</List.Item>
           )}
