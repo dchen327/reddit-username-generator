@@ -54,7 +54,7 @@ class App extends Component<Props, State> {
   }
 
   loadModel = async () => {
-    const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
+    const model = await tf.loadLayersModel('../assets/tfjs/model.json');
     this.setState({loadingModel: false, model: model});
   }
 
@@ -103,7 +103,7 @@ class App extends Component<Props, State> {
   render() {
     const { loadingModel, generatingText, usernames } = this.state;
     return (
-      <Container>
+      <Container height="80%">
         <Header size='huge' style={{paddingTop: '30px', display: 'inline-block'}}>Reddit Username Generator</Header>
         <a style={{padding: '20px'}} href='https://github.com/dchen327/reddit-username-generator'>(GitHub)</a>
         <Divider />
@@ -152,7 +152,7 @@ class App extends Component<Props, State> {
       <Loader size='huge' active>Generating usernames... (~1s per username)</Loader>}
 
         {usernames.length > 0 && // usernames are generated
-        <List size='huge'>
+        <List paddingBottom='50px' size='huge'>
           {usernames.map((username, index) => 
             <List.Item key={index}>{username}</List.Item>
           )}
