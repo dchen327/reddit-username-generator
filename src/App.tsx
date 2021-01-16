@@ -79,7 +79,6 @@ class App extends Component<Props, State> {
     let textGenerated: string[] = []; // store our generated usernames
     let currString = '';
     
-    let numGenerated = 0;
     while (textGenerated.length < numUsernames) {
       let predictions = model.predict(inputTensor);
       // remove batch dimension
@@ -89,12 +88,12 @@ class App extends Component<Props, State> {
       // use multinomial since random.categorical doesn't exist in tfjs
       let predTensor = tf.multinomial(predictions, 1);
       inputTensor = tf.expandDims(predTensor, 0);
-      numGenerated++;
       await predTensor.data().then(data => {
         let predictedID = data[0];
         // console.log(idx2char[predictedID]);
         if (idx2char[predictedID] === '\n') { // finished creating a new username
           textGenerated.push(currString);
+          console.log(currString);
           currString = '';
         }
         else {
@@ -102,21 +101,10 @@ class App extends Component<Props, State> {
         }
       });
     }
-    
-    console.log(textGenerated);
-    
-    console.log('usernames generated')
-    let usernames = ['text ', 'username 2', 'hello world'];
-    this.setState({generatingText: false, usernames: usernames, numGenerated: 20, temperature: 0.5, startString: '\n'});
-  }
-  
-  createUsernamesClicked = () => {
-    console.log('create usernames clicked');
-    this.setState({generatingText: true});
-    this.generateUsernames();
   }
 
   render() {
+    const { loadingModel, generatingText, usernames, numGenerated, numUsernames } = this.state;
     return (
       <Container>
         <Header size='huge' style={{paddingTop: '20px', display: 'inline-block'}}>Reddit Username Generator</Header>
@@ -150,16 +138,16 @@ class App extends Component<Props, State> {
           </Form.Group>
         </Form>
         <Divider/>
-        {this.state.loadingModel ? // show loading indicator when loading model
+        {loadingModel ? // show loading indicator when loading model
         <Loader active>Loading Model</Loader> :
-        <Button color='teal' onClick={this.createUsernamesClicked}>Create Usernames</Button>}
+        <Button color='teal' onClick={this.generateUsernames}>Create Usernames</Button>}
 
-        {this.state.generatingText && // when generating text
-        <Loader active>Generating usernames... {this.state.numGenerated}/{this.state.numUsernames}</Loader>}
+        {generatingText && // when generating text
+        <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}
 
-        {this.state.usernames.length > 0 && // usernames are generated
+        {usernames.length > 0 && // usernames are generated
         <List>
-          {this.state.usernames.map((username, index) => 
+          {usernames.map((username, index) => 
             <List.Item key={index}>{username}</List.Item>
           )}
         </List>
