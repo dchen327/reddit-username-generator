@@ -108,8 +108,8 @@ class App extends Component<Props, State> {
         <a style={{padding: '20px'}} href='https://github.com/dchen327/reddit-username-generator'>(GitHub)</a>
         <Divider />
         <Segment size='large'>
-          <p>Trained on 150,000 Reddit usernames, this LSTM-based text generator can produce novel usernames very similar to other Redditors.</p>
-          <p>Since the text generation is done through TensorFlow.js, it can take up to around 1 second per username.</p>
+          <p>Trained on 400,000 Reddit usernames, this LSTM-based text generator can produce novel usernames very similar to other Redditors.</p>
+          <p>Since the text generation is done in browser through TensorFlow.js, it can take up to around 1 second per username.</p>
           <p>Toggle the temperature to vary the degree of "sameness" in the generated usernames. Lower temperatures are more predictable.</p>
           <p>I apologize if there's any profanity in the generated usernames since I haven't added any filtering.</p>
           <p>TODOS: form input error handling, show progress while loading, actually check if username is taken, speed ups</p>
