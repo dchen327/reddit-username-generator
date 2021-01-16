@@ -53,6 +53,12 @@ class App extends Component<Props, State> {
     this.loadModel();
   }
 
+  componentDidUpdate(prevState: any) {
+    if (this.state.numGenerated !== prevState.numGenerated) {
+      this.setState({})
+    }
+  }
+
   loadModel = async () => {
     console.log('loading model');
     const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
@@ -63,7 +69,7 @@ class App extends Component<Props, State> {
   
   generateUsernames = async () => {
     console.log('generating usernames')
-    this.setState({ generatingText: true }, async () => {
+    this.setState({ generatingText: true, numGenerated: 0 }, async () => {
       await this.timeout(10); // wait for state to rerender (i'm pretty sure this is really bad)
       let {numUsernames, temperature, startString, model} = this.state;
       const char2idx = {"\n": 0, "-": 1, "0": 2, "1": 3, "2": 4, "3": 5, "4": 6, "5": 7, "6": 8, "7": 9, "8": 10, "9": 11, "A": 12, "B": 13, "C": 14, "D": 15, "E": 16, "F": 17, "G": 18, "H": 19, "I": 20, "J": 21, "K": 22, "L": 23, "M": 24, "N": 25, "O": 26, "P": 27, "Q": 28, "R": 29, "S": 30, "T": 31, "U": 32, "V": 33, "W": 34, "X": 35, "Y": 36, "Z": 37, "_": 38, "a": 39, "b": 40, "c": 41, "d": 42, "e": 43, "f": 44, "g": 45, "h": 46, "i": 47, "j": 48, "k": 49, "l": 50, "m": 51, "n": 52, "o": 53, "p": 54, "q": 55, "r": 56, "s": 57, "t": 58, "u": 59, "v": 60, "w": 61, "x": 62, "y": 63, "z": 64};
@@ -95,6 +101,9 @@ class App extends Component<Props, State> {
           textGenerated.push(currString);
           console.log(currString);
           currString = '';
+          this.setState({numGenerated: this.state.numGenerated + 1}, async () => {
+            console.log(this.state.numGenerated);
+          });
         }
         else {
           currString += idx2char[predictedID];
@@ -144,6 +153,7 @@ class App extends Component<Props, State> {
         <Button color='teal' onClick={this.generateUsernames}>Create Usernames</Button>}
 
         {generatingText && // when generating text
+        // <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}
         <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}
 
         {usernames.length > 0 && // usernames are generated
