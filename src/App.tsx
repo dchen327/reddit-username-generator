@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {Button, Container, Divider, Form, Header, Input, List, Loader, Popup, Segment, TextArea} from 'semantic-ui-react'
+import {Button, Container, Divider, Form, Header, Input, List, Loader, Popup, Segment} from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
 import * as tf from '@tensorflow/tfjs';
@@ -104,15 +104,16 @@ class App extends Component<Props, State> {
     const { loadingModel, generatingText, usernames } = this.state;
     return (
       <Container>
-        <Header size='huge' style={{paddingTop: '20px', display: 'inline-block'}}>Reddit Username Generator</Header>
-        <a style={{padding: '20px'}} href='https://github.com/dchen327'>(GitHub)</a>
+        <Header size='huge' style={{paddingTop: '30px', display: 'inline-block'}}>Reddit Username Generator</Header>
+        <a style={{padding: '20px'}} href='https://github.com/dchen327/reddit-username-generator'>(GitHub)</a>
         <Divider />
-        <Segment>
+        <Segment size='large'>
           <p>Trained on 150,000 Reddit usernames, this LSTM-based text generator can produce novel usernames very similar to other Redditors.</p>
           <p>Since the text generation is done through TensorFlow.js, it can take up to around 1 second per username.</p>
           <p>Toggle the temperature to vary the degree of "sameness" in the generated usernames. Lower temperatures are more predictable.</p>
+          <p>I apologize if there's any profanity in the generated usernames since I haven't added any filtering.</p>
         </Segment>
-        <Form>
+        <Form size='big'>
           <Form.Group widths='equal'>
             <Popup 
               content='Generate this many usernames.'
@@ -142,15 +143,15 @@ class App extends Component<Props, State> {
         </Form>
         <Divider/>
         {loadingModel ? // show loading indicator when loading model
-        <Loader active>Loading Model</Loader> :
-        <Button color='teal' onClick={this.generateUsernames}>Create Usernames</Button>}
+        <Loader size='huge' active>Loading Model</Loader> :
+        <Button color='teal' size='big' onClick={this.generateUsernames}>Create Usernames</Button>}
 
         {generatingText && // when generating text
         // <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}
-      <Loader active>Generating usernames... (It takes ~1s per username)</Loader>}
+      <Loader size='huge' active>Generating usernames... (~1s per username)</Loader>}
 
         {usernames.length > 0 && // usernames are generated
-        <List size='big'>
+        <List size='huge'>
           {usernames.map((username, index) => 
             <List.Item key={index}>{username}</List.Item>
           )}
