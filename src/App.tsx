@@ -55,15 +55,14 @@ class App extends Component<Props, State> {
 
   loadModel = async () => {
     console.log('loading model');
-    // await this.timeout(200);
     const model = await tf.loadLayersModel('http://127.0.0.1:8000/assets/tfjs/model.json');
     console.log('model loaded');
     this.setState({loadingModel: false, model: model});
   }
 
+  
   generateUsernames = async () => {
     console.log('generating usernames')
-    this.setState({generatingText: true});
     
     let {numUsernames, temperature, startString, model} = this.state;
     const char2idx = {"\n": 0, "-": 1, "0": 2, "1": 3, "2": 4, "3": 5, "4": 6, "5": 7, "6": 8, "7": 9, "8": 10, "9": 11, "A": 12, "B": 13, "C": 14, "D": 15, "E": 16, "F": 17, "G": 18, "H": 19, "I": 20, "J": 21, "K": 22, "L": 23, "M": 24, "N": 25, "O": 26, "P": 27, "Q": 28, "R": 29, "S": 30, "T": 31, "U": 32, "V": 33, "W": 34, "X": 35, "Y": 36, "Z": 37, "_": 38, "a": 39, "b": 40, "c": 41, "d": 42, "e": 43, "f": 44, "g": 45, "h": 46, "i": 47, "j": 48, "k": 49, "l": 50, "m": 51, "n": 52, "o": 53, "p": 54, "q": 55, "r": 56, "s": 57, "t": 58, "u": 59, "v": 60, "w": 61, "x": 62, "y": 63, "z": 64};
@@ -76,11 +75,12 @@ class App extends Component<Props, State> {
     }
     let inputTensor = tf.tensor1d(inputEval);
     inputTensor.expandDims(0);  // fix dimensions
-
+    
     let textGenerated: string[] = []; // store our generated usernames
+    let currString = '';
     
     let numGenerated = 0;
-    while (numGenerated < numUsernames) {
+    while (textGenerated.length < numUsernames) {
       let predictions = model.predict(inputTensor);
       // remove batch dimension
       predictions = tf.squeeze(predictions);
@@ -90,28 +90,30 @@ class App extends Component<Props, State> {
       let predTensor = tf.multinomial(predictions, 1);
       inputTensor = tf.expandDims(predTensor, 0);
       numGenerated++;
-      predTensor.data().then(data => {
+      await predTensor.data().then(data => {
         let predictedID = data[0];
         // console.log(idx2char[predictedID]);
         if (idx2char[predictedID] === '\n') { // finished creating a new username
-          numGenerated += 100;
-          console.log('NEW USERNAME');
+          textGenerated.push(currString);
+          currString = '';
         }
-        textGenerated.push(idx2char[predictedID]);
+        else {
+          currString += idx2char[predictedID];
+        }
       });
-      if (numGenerated > 20) {
-        console.log('> 20');
-        break;
-      }
-      // console.log(idx2char[predictedID]);
-      // break;
     }
     
     console.log(textGenerated);
-
+    
     console.log('usernames generated')
     let usernames = ['text ', 'username 2', 'hello world'];
     this.setState({generatingText: false, usernames: usernames, numGenerated: 20, temperature: 0.5, startString: '\n'});
+  }
+  
+  createUsernamesClicked = () => {
+    console.log('create usernames clicked');
+    this.setState({generatingText: true});
+    this.generateUsernames();
   }
 
   render() {
@@ -150,7 +152,7 @@ class App extends Component<Props, State> {
         <Divider/>
         {this.state.loadingModel ? // show loading indicator when loading model
         <Loader active>Loading Model</Loader> :
-        <Button color='teal' onClick={this.generateUsernames}>Create Usernames</Button>}
+        <Button color='teal' onClick={this.createUsernamesClicked}>Create Usernames</Button>}
 
         {this.state.generatingText && // when generating text
         <Loader active>Generating usernames... {this.state.numGenerated}/{this.state.numUsernames}</Loader>}
