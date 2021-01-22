@@ -53,12 +53,12 @@ class App extends Component<Props, State> {
 
   componentDidMount() {
     // this.loadModel();
+    this.setState({ loadingModel: false });
     this.setState({ generatingText: true });
     fetch('/time').then(res => res.json()).then(data => {
       this.setState({ currentTime: data.time });
-      console.log()
+      this.setState({ generatingText: false });
     });
-    this.setState({ generatingText: false });
   }
 
   loadModel = async () => {
@@ -104,7 +104,6 @@ class App extends Component<Props, State> {
           currString += idx2char[predictedID];
         }
       }
-      this.setState({ generatingText: false, usernames: textGenerated });
       this.setState({ generatingText: false, usernames: textGenerated });
     });
   }
