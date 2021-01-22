@@ -52,11 +52,13 @@ class App extends Component<Props, State> {
   }
 
   componentDidMount() {
-    this.loadModel();
-    fetch('http://localhost:5000/time').then(res => res.json()).then(data => {
+    // this.loadModel();
+    this.setState({ generatingText: true });
+    fetch('/time').then(res => res.json()).then(data => {
       this.setState({ currentTime: data.time });
       console.log()
     });
+    this.setState({ generatingText: false });
   }
 
   loadModel = async () => {
