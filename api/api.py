@@ -59,6 +59,12 @@ def generate_usernames():
         predicted_id = tf.random.categorical(
             predictions, num_samples=1)[-1, 0].numpy()
 
+        # don't create super short usernames
+        while idx2char[predicted_id] == '\n' and len(curr_str) < 10:
+            # pick another
+            predicted_id = tf.random.categorical(
+                predictions, num_samples=1)[-1, 0].numpy()
+
         # Pass the predicted character as the next input to the model
         # along with the previous hidden state
         input_eval = tf.expand_dims([predicted_id], 0)
@@ -66,7 +72,10 @@ def generate_usernames():
         if idx2char[predicted_id] == '\n':  # finished creating a new username
             num_generate -= 1
             text_generated.append(curr_str)
-            curr_str = ''
+            # reset to start string
+            curr_str = start_string
+            input_eval = [char2idx[s] for s in start_string]
+            input_eval = tf.expand_dims(input_eval, 0)
         else:
             curr_str += idx2char[predicted_id]
 
