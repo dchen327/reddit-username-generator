@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { Button, Container, Divider, Form, Header, Input, List, Loader, Popup, Segment } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css'
 
-import * as tf from '@tensorflow/tfjs';
-
 type Props = {};
 
 type State = {
@@ -14,8 +12,6 @@ type State = {
   startString: string,
   numGenerated: number,
   usernames: Array<string>,
-  model: any,
-  currentTime: any,
 };
 
 class App extends Component<Props, State> {
@@ -30,8 +26,6 @@ class App extends Component<Props, State> {
       startString: '\n',
       numGenerated: 0,
       usernames: [],
-      model: null,
-      currentTime: null,
     };
   }
 
@@ -52,15 +46,10 @@ class App extends Component<Props, State> {
   }
 
   componentDidMount() {
-    this.loadModel2();
+    this.loadModel();
   }
 
   loadModel = async () => {
-    const model = await tf.loadLayersModel('https://storage.googleapis.com/reddit-username-generator/tfjs-new/model.json');
-    this.setState({ loadingModel: false, model: model });
-  }
-
-  loadModel2 = async () => {
     fetch('/load').then(res => res.json()).then(data => {
       console.log(data);
       this.setState({ loadingModel: false });
@@ -68,48 +57,8 @@ class App extends Component<Props, State> {
   }
 
 
+
   generateUsernames = async () => {
-    this.setState({ generatingText: true, numGenerated: 0 }, async () => {
-      await this.timeout(10); // wait for state to rerender (i'm pretty sure this is really bad)
-      let { numUsernames, temperature, startString, model } = this.state;
-      const char2idx = { "\n": 0, "-": 1, "0": 2, "1": 3, "2": 4, "3": 5, "4": 6, "5": 7, "6": 8, "7": 9, "8": 10, "9": 11, "A": 12, "B": 13, "C": 14, "D": 15, "E": 16, "F": 17, "G": 18, "H": 19, "I": 20, "J": 21, "K": 22, "L": 23, "M": 24, "N": 25, "O": 26, "P": 27, "Q": 28, "R": 29, "S": 30, "T": 31, "U": 32, "V": 33, "W": 34, "X": 35, "Y": 36, "Z": 37, "_": 38, "a": 39, "b": 40, "c": 41, "d": 42, "e": 43, "f": 44, "g": 45, "h": 46, "i": 47, "j": 48, "k": 49, "l": 50, "m": 51, "n": 52, "o": 53, "p": 54, "q": 55, "r": 56, "s": 57, "t": 58, "u": 59, "v": 60, "w": 61, "x": 62, "y": 63, "z": 64 };
-      const idx2char = ['\n', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-
-      // Convert start string to numbers (vectorizing)
-      let inputEval: string[] = [];
-      for (let char of startString) {
-        inputEval.push(char2idx[char]);
-      }
-      let inputTensor = tf.tensor1d(inputEval);
-      inputTensor.expandDims(0);  // fix dimensions
-
-      let textGenerated: string[] = []; // store our generated usernames
-      let currString = '';
-
-      while (textGenerated.length < numUsernames) {
-        let predictions = model.predict(inputTensor);
-        // remove batch dimension
-        predictions = tf.squeeze(predictions);
-        // use categorical distribution to predict next char
-        predictions = predictions.mul(1 / temperature);
-        // use multinomial since random.categorical doesn't exist in tfjs
-        let predTensor = tf.multinomial(predictions, 1);
-        inputTensor = tf.expandDims(predTensor, 0);
-        let predictedID = predTensor.dataSync()[0];
-
-        if (idx2char[predictedID] === '\n') { // finished creating a new username
-          textGenerated.push(currString);
-          currString = '';
-        }
-        else {
-          currString += idx2char[predictedID];
-        }
-      }
-      this.setState({ generatingText: false, usernames: textGenerated });
-    });
-  }
-
-  generateUsernames2 = async () => {
     this.setState({ generatingText: true, numGenerated: 0 }, async () => {
       const { numUsernames, temperature, startString } = this.state;
       fetch('/generate', {
@@ -143,7 +92,6 @@ class App extends Component<Props, State> {
           <p>Toggle the temperature to vary the degree of "sameness" in the generated usernames. Lower temperatures are more predictable.</p>
           <p>I apologize if there's any profanity in the generated usernames since I haven't added any filtering.</p>
           <p>TODOS: form input error handling, show progress while loading, actually check if username is taken, speed ups</p>
-          <p>The current time is {this.state.currentTime}</p>
         </Segment>
         <Form size='big'>
           <Form.Group widths='equal'>
@@ -163,20 +111,20 @@ class App extends Component<Props, State> {
               }
               on='focus'
             />
-            {/* <Popup 
+            <Popup
               content='Start string (ex: PM_ME). This will be used as the prefix for the first username generated. If left blank, the first username will start with a random character.'
               trigger={
                 <Form.Field control={Input} label='Start string:'
-                onChange={this.startStringChanged}/>
+                  onChange={this.startStringChanged} />
               }
               on='focus'
-            /> */}
+            />
           </Form.Group>
         </Form>
         <Divider />
         {loadingModel ? // show loading indicator when loading model
           <Loader size='huge' active>Loading Model</Loader> :
-          <Button color='teal' size='big' onClick={this.generateUsernames2}>Create Usernames</Button>}
+          <Button color='teal' size='big' onClick={this.generateUsernames}>Create Usernames</Button>}
 
         {generatingText && // when generating text
           // <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}

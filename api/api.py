@@ -46,7 +46,7 @@ def generate_usernames():
 
     # Empty string to store our results
     text_generated = []
-    curr_str = ''
+    curr_str = start_string
     # Here batch size == 1
     model.reset_states()
     while num_generate > 0:
