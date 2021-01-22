@@ -59,11 +59,13 @@ def generate_usernames():
         predicted_id = tf.random.categorical(
             predictions, num_samples=1)[-1, 0].numpy()
 
+        retries = 0
         # don't create super short usernames
-        while idx2char[predicted_id] == '\n' and len(curr_str) < 10:
+        while idx2char[predicted_id] == '\n' and len(curr_str) < 10 and retries < 5:
             # pick another
             predicted_id = tf.random.categorical(
                 predictions, num_samples=1)[-1, 0].numpy()
+            retries += 1
 
         # Pass the predicted character as the next input to the model
         # along with the previous hidden state
