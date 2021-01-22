@@ -55,7 +55,7 @@ class App extends Component<Props, State> {
   }
 
   loadModel = async () => {
-    fetch('/load').then(res => res.json()).then(data => {
+    fetch('/api/load').then(res => res.json()).then(data => {
       this.setState({ loadingModel: false });
     })
   }
@@ -65,7 +65,7 @@ class App extends Component<Props, State> {
   generateUsernames = async () => {
     this.setState({ generatingText: true, numGenerated: 0 }, async () => {
       const { numUsernames, temperature, startString } = this.state;
-      fetch('/generate', {
+      fetch('/api/generate', {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json'

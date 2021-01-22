@@ -9,7 +9,7 @@ cors = CORS(app)
 model = None
 
 
-@app.route('/load')
+@app.route('/api/load')
 @cross_origin()
 def load_model():
     """ Load TensorFlow model from assets """
@@ -19,7 +19,7 @@ def load_model():
     return json.dumps('loaded')
 
 
-@app.route('/generate', methods=['GET', 'POST'])
+@app.route('/api/generate', methods=['GET', 'POST'])
 @cross_origin()
 def generate_usernames():
     if model is None:
