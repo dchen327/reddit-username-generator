@@ -23,7 +23,7 @@ class App extends Component<Props, State> {
     super(props);
 
     this.state = {
-      loadingModel: true,
+      loadingModel: false,
       generatingText: false,
       numUsernames: 5,
       temperature: 0.5,
@@ -52,7 +52,6 @@ class App extends Component<Props, State> {
   }
 
   componentDidMount() {
-    this.loadModel();
   }
 
   loadModel = async () => {
