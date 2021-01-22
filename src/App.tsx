@@ -15,6 +15,7 @@ type State = {
   numGenerated: number,
   usernames: Array<string>,
   model: any,
+  currentTime: any,
 };
 
 class App extends Component<Props, State> {
@@ -30,6 +31,7 @@ class App extends Component<Props, State> {
       numGenerated: 0,
       usernames: [],
       model: null,
+      currentTime: null,
     };
   }
   
@@ -51,6 +53,10 @@ class App extends Component<Props, State> {
 
   componentDidMount() {
     this.loadModel();
+    fetch('http://localhost:5000/time').then(res => res.json()).then(data => {
+      this.setState({ currentTime: data.time });
+      console.log()
+    });
   }
 
   loadModel = async () => {
@@ -113,6 +119,7 @@ class App extends Component<Props, State> {
           <p>Toggle the temperature to vary the degree of "sameness" in the generated usernames. Lower temperatures are more predictable.</p>
           <p>I apologize if there's any profanity in the generated usernames since I haven't added any filtering.</p>
           <p>TODOS: form input error handling, show progress while loading, actually check if username is taken, speed ups</p>
+          <p>The current time is {this.state.currentTime}</p>
         </Segment>
         <Form size='big'>
           <Form.Group widths='equal'>
