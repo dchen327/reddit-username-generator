@@ -7,6 +7,7 @@ import json
 
 app = Flask(__name__)
 cors = CORS(app)
+model = None
 
 
 @app.route('/time')
@@ -16,13 +17,20 @@ def get_current_time():
     return {'time': time()}
 
 
+@app.route('/load')
+@cross_origin()
+def load_model():
+    """ Load TensorFlow model from assets """
+    global model  # this probably shouldn't be global
+    model = tf.keras.models.load_model(
+        '../assets/lstm-400k-100e-1.84l', compile=False)
+    return json.dumps('loaded')
+
+
 @app.route('/generate')
 @cross_origin()
 def generate_usernames(num_generate=10, temperature=0.5, start_string='\n'):
     """ Given the model, the number of usernames to generate, and a temperature, create usernames """
-    model = tf.keras.models.load_model(
-        '../assets/lstm-400k-100e-1.84l', compile=False)
-
     char2idx = {"\n": 0, "-": 1, "0": 2, "1": 3, "2": 4, "3": 5, "4": 6, "5": 7, "6": 8, "7": 9, "8": 10, "9": 11, "A": 12, "B": 13, "C": 14, "D": 15, "E": 16, "F": 17, "G": 18, "H": 19, "I": 20, "J": 21, "K": 22, "L": 23, "M": 24, "N": 25, "O": 26, "P": 27, "Q": 28, "R": 29, "S": 30, "T": 31, "U": 32,
                 "V": 33, "W": 34, "X": 35, "Y": 36, "Z": 37, "_": 38, "a": 39, "b": 40, "c": 41, "d": 42, "e": 43, "f": 44, "g": 45, "h": 46, "i": 47, "j": 48, "k": 49, "l": 50, "m": 51, "n": 52, "o": 53, "p": 54, "q": 55, "r": 56, "s": 57, "t": 58, "u": 59, "v": 60, "w": 61, "x": 62, "y": 63, "z": 64}
     idx2char = ['\n', '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',

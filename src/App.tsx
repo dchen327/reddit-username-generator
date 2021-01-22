@@ -23,7 +23,7 @@ class App extends Component<Props, State> {
     super(props);
 
     this.state = {
-      loadingModel: false,
+      loadingModel: true,
       generatingText: false,
       numUsernames: 5,
       temperature: 0.5,
@@ -52,11 +52,19 @@ class App extends Component<Props, State> {
   }
 
   componentDidMount() {
+    this.loadModel2();
   }
 
   loadModel = async () => {
     const model = await tf.loadLayersModel('https://storage.googleapis.com/reddit-username-generator/tfjs-new/model.json');
     this.setState({ loadingModel: false, model: model });
+  }
+
+  loadModel2 = async () => {
+    fetch('/load').then(res => res.json()).then(data => {
+      console.log(data);
+      this.setState({ loadingModel: false });
+    })
   }
 
 
