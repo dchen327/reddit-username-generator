@@ -42,7 +42,12 @@ class App extends Component<Props, State> {
   }
 
   startStringChanged = (e, { value }) => {
-    this.setState({ startString: value });
+    if (value === '') {
+      this.setState({ startString: '\n' });
+    }
+    else {
+      this.setState({ startString: value });
+    }
   }
 
   componentDidMount() {
