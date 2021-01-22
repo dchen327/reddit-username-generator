@@ -47,7 +47,7 @@ def generate_usernames():
     # Empty string to store our results
     text_generated = []
     curr_str = start_string
-    num_samples = 10
+    num_samples = 20
     # Here batch size == 1
     model.reset_states()
     while num_generate > 0:
@@ -57,16 +57,14 @@ def generate_usernames():
 
         # using a categorical distribution to predict the character returned by the model
         predictions = predictions / temperature
-        sample = tf.random.categorical(
-            predictions, num_samples=num_samples)
 
-        # we don't want too many short usernames
-        predicted_id = sample[-1, 0].numpy()
+        # we don't want too many short usernames, don't pick 0: '\n'
         if len(curr_str) < 10:
-            for i in range(num_samples):
-                predicted_id = sample[-1, i].numpy()
-                if idx2char[predicted_id] != '\n':
-                    break
+            predicted_id = tf.random.categorical(
+                predictions[:, 1:], num_samples=1)[-1, 0].numpy() + 1
+        else:
+            predicted_id = tf.random.categorical(
+                predictions, num_samples=1)[-1, 0].numpy()
 
         # Pass the predicted character as the next input to the model
         # along with the previous hidden state
