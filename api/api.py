@@ -1,6 +1,5 @@
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
-from time import sleep, time
 
 import tensorflow as tf
 import json
@@ -8,13 +7,6 @@ import json
 app = Flask(__name__)
 cors = CORS(app)
 model = None
-
-
-@app.route('/time')
-@cross_origin()
-def get_current_time():
-    sleep(1)
-    return {'time': time()}
 
 
 @app.route('/load')
@@ -30,6 +22,8 @@ def load_model():
 @app.route('/generate', methods=['GET', 'POST'])
 @cross_origin()
 def generate_usernames():
+    if model is None:
+        return json.dumps(['Model not loaded'])
     params = request.get_json()
     num_generate = int(params.get('numUsernames', '5'))
     temperature = float(params.get('temperature', '0.5'))
