@@ -111,9 +111,22 @@ class App extends Component<Props, State> {
 
   generateUsernames2 = async () => {
     this.setState({ generatingText: true, numGenerated: 0 }, async () => {
-      fetch('/generate').then(res => res.json()).then(data => {
-        this.setState({ generatingText: false, usernames: data });
+      const { numUsernames, temperature, startString } = this.state;
+      fetch('/generate', {
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        method: 'POST',
+        body: JSON.stringify({
+          'numUsernames': numUsernames,
+          'temperature': temperature,
+          'startString': startString,
+        })
       })
+        .then(res => res.json()).then(data => {
+          this.setState({ generatingText: false, usernames: data });
+        })
     });
   }
 
