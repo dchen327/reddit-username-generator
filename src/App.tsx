@@ -52,13 +52,7 @@ class App extends Component<Props, State> {
   }
 
   componentDidMount() {
-    // this.loadModel();
-    this.setState({ loadingModel: false });
-    this.setState({ generatingText: true });
-    fetch('/time').then(res => res.json()).then(data => {
-      this.setState({ currentTime: data.time });
-      this.setState({ generatingText: false });
-    });
+    this.loadModel();
   }
 
   loadModel = async () => {
@@ -108,6 +102,15 @@ class App extends Component<Props, State> {
     });
   }
 
+  generateUsernames2 = async () => {
+    this.setState({ generatingText: true, numGenerated: 0 }, async () => {
+      fetch('/generate').then(res => res.json()).then(data => {
+        console.log(data);
+      })
+      this.setState({ generatingText: false });
+    });
+  }
+
   render() {
     const { loadingModel, generatingText, usernames } = this.state;
     return (
@@ -154,7 +157,7 @@ class App extends Component<Props, State> {
         <Divider />
         {loadingModel ? // show loading indicator when loading model
           <Loader size='huge' active>Loading Model</Loader> :
-          <Button color='teal' size='big' onClick={this.generateUsernames}>Create Usernames</Button>}
+          <Button color='teal' size='big' onClick={this.generateUsernames2}>Create Usernames</Button>}
 
         {generatingText && // when generating text
           // <Loader active>Generating usernames... {numGenerated}/{numUsernames}</Loader>}

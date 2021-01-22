@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_cors import CORS, cross_origin
-from time import sleep
+from time import sleep, time
 
 import tensorflow as tf
-import numpy as np
+import json
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -12,7 +12,7 @@ cors = CORS(app)
 @app.route('/time')
 @cross_origin()
 def get_current_time():
-    sleep(3)
+    sleep(1)
     return {'time': time()}
 
 
@@ -20,7 +20,8 @@ def get_current_time():
 @cross_origin()
 def generate_usernames(num_generate=10, temperature=0.5, start_string='\n'):
     """ Given the model, the number of usernames to generate, and a temperature, create usernames """
-    model = tf.keras.models.load_model('../assets/lstm-400k-100e-1.84l')
+    model = tf.keras.models.load_model(
+        '../assets/lstm-400k-100e-1.84l', compile=False)
 
     char2idx = {"\n": 0, "-": 1, "0": 2, "1": 3, "2": 4, "3": 5, "4": 6, "5": 7, "6": 8, "7": 9, "8": 10, "9": 11, "A": 12, "B": 13, "C": 14, "D": 15, "E": 16, "F": 17, "G": 18, "H": 19, "I": 20, "J": 21, "K": 22, "L": 23, "M": 24, "N": 25, "O": 26, "P": 27, "Q": 28, "R": 29, "S": 30, "T": 31, "U": 32,
                 "V": 33, "W": 34, "X": 35, "Y": 36, "Z": 37, "_": 38, "a": 39, "b": 40, "c": 41, "d": 42, "e": 43, "f": 44, "g": 45, "h": 46, "i": 47, "j": 48, "k": 49, "l": 50, "m": 51, "n": 52, "o": 53, "p": 54, "q": 55, "r": 56, "s": 57, "t": 58, "u": 59, "v": 60, "w": 61, "x": 62, "y": 63, "z": 64}
@@ -56,4 +57,4 @@ def generate_usernames(num_generate=10, temperature=0.5, start_string='\n'):
         else:
             curr_str += idx2char[predicted_id]
 
-    return text_generated
+    return json.dumps(text_generated)
