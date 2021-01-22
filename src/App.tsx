@@ -105,9 +105,8 @@ class App extends Component<Props, State> {
   generateUsernames2 = async () => {
     this.setState({ generatingText: true, numGenerated: 0 }, async () => {
       fetch('/generate').then(res => res.json()).then(data => {
-        console.log(data);
+        this.setState({ generatingText: false, usernames: data });
       })
-      this.setState({ generatingText: false });
     });
   }
 
