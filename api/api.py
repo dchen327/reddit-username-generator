@@ -61,7 +61,7 @@ def generate_usernames():
 
         retries = 0
         # don't create super short usernames
-        while idx2char[predicted_id] == '\n' and len(curr_str) < 10 and retries < 5:
+        while idx2char[predicted_id] == '\n' and len(curr_str) < 10 and retries < 10:
             # pick another
             predicted_id = tf.random.categorical(
                 predictions, num_samples=1)[-1, 0].numpy()
