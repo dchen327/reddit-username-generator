@@ -56,7 +56,6 @@ class App extends Component<Props, State> {
 
   loadModel = async () => {
     fetch('/load').then(res => res.json()).then(data => {
-      console.log(data);
       this.setState({ loadingModel: false });
     })
   }
