@@ -4,7 +4,7 @@ from flask_cors import CORS, cross_origin
 import tensorflow as tf
 import json
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='../build', static_url_path='/')
 cors = CORS(app)
 model = None
 
