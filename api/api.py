@@ -20,7 +20,7 @@ def load_model():
     """ Load TensorFlow model from assets """
     global model  # this probably shouldn't be global
     model = tf.keras.models.load_model(
-        '../assets/lstm-400k-100e-1.84l', compile=False)
+        'assets/lstm-400k-100e-1.84l', compile=False)
     return json.dumps('loaded')
 
 
